@@ -19,26 +19,16 @@ module.exports = {
       },
       {
         test: /\.js$/,
-        exclude: file => (
-          /node_modules/.test(file) &&
-            !/\.vue\.js/.test(file)
-        ),
+        exclude: file => /node_modules/.test(file) && !/\.vue\.js/.test(file),
         loader: 'babel-loader'
       },
       {
         test: /\.css$/,
-        use: [
-          'vue-style-loader',
-          'css-loader'
-        ]
+        use: ['vue-style-loader', 'css-loader']
       },
       {
         test: /\.scss$/,
-        use: [
-          'vue-style-loader',
-          'css-loader',
-          'sass-loader'
-        ]
+        use: ['vue-style-loader', 'css-loader', 'sass-loader']
       },
       {
         test: /\.sass$/,
@@ -64,8 +54,8 @@ module.exports = {
   },
   resolve: {
     alias: {
-      'vue$': 'vue/dist/vue.esm.js',
-      'plugin': path.resolve(__dirname, '../dist/index.js')
+      vue$: 'vue/dist/vue.esm.js',
+      plugin: path.resolve(__dirname, '../dist/index.js')
     }
   },
   devServer: {

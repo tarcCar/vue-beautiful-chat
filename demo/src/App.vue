@@ -1,10 +1,7 @@
 <template>
   <div :style="{background: backgroundColor}">
-    <Header
-      :chosenColor="chosenColor"
-      :colors="colors"
-    />
-    <beautiful-chat 
+    <Header :chosenColor="chosenColor" :colors="colors"/>
+    <beautiful-chat
       :alwaysScrollToBottom="alwaysScrollToBottom"
       :close="closeChat"
       :colors="colors"
@@ -19,18 +16,29 @@
       :showFile="true"
       :showTypingIndicator="showTypingIndicator"
       :titleImageUrl="titleImageUrl"
+      :disableUserListToggle="true"
+      :showEnterWindow="mostrarEnterWindow"
       @onType="handleOnType"
       @edit="editMessage"
+      @userEntered="usuarioEntrou"
     >
       <template v-slot:text-message-toolbox="scopedProps">
-        <button v-if="!scopedProps.me && scopedProps.message.type==='text'" @click.prevent="like(scopedProps.message.id)">
-          👍
-        </button>
+        <button
+          v-if="!scopedProps.me && scopedProps.message.type==='text'"
+          @click.prevent="like(scopedProps.message.id)"
+        >👍</button>
       </template>
-      <template v-slot:text-message-body="scopedProps"> 
+      <template v-slot:text-message-body="scopedProps">
         <p class="sc-message--text-content" v-html="scopedProps.messageText"></p>
-        <p v-if="scopedProps.message.data.meta" class='sc-message--meta' :style="{color: scopedProps.messageColors.color}">{{scopedProps.message.data.meta}}</p>
-        <p v-if="scopedProps.message.isEdited || scopedProps.message.liked" class='sc-message--edited'>
+        <p
+          v-if="scopedProps.message.data.meta"
+          class="sc-message--meta"
+          :style="{color: scopedProps.messageColors.color}"
+        >{{scopedProps.message.data.meta}}</p>
+        <p
+          v-if="scopedProps.message.isEdited || scopedProps.message.liked"
+          class="sc-message--edited"
+        >
           <template v-if="scopedProps.message.isEdited">🔧</template>
           <template v-if="scopedProps.message.liked">👍</template>
         </p>
@@ -74,17 +82,11 @@
     </p>
     <v-dialog/>
     <p class="text-center messageStyling">
-      <label>Message styling enabled?
-        <input
-          @change="messageStylingToggled"
-          checked
-          type="checkbox"
-        >
+      <label>
+        Message styling enabled?
+        <input @change="messageStylingToggled" checked type="checkbox">
       </label>
-      <a
-        @click.prevent="showStylingInfo()"
-        href="#"
-      >info</a>
+      <a @click.prevent="showStylingInfo()" href="#">info</a>
     </p>
     <TestArea
       :chosenColor="chosenColor"
@@ -93,10 +95,7 @@
       :onMessage="sendMessage"
       :onTyping="handleTyping"
     />
-    <Footer
-      :chosenColor="chosenColor"
-      :colors="colors"
-    />
+    <Footer :chosenColor="chosenColor" :colors="colors"/>
   </div>
 </template>
 
@@ -129,7 +128,8 @@ export default {
       chosenColor: null,
       alwaysScrollToBottom: false,
       messageStyling: true,
-      userIsTyping: false
+      userIsTyping: false,
+      showEntrar: true
     }
   },
   created() {
@@ -156,7 +156,10 @@ export default {
           : ''
     },
     onMessageWasSent(message) {
-      this.messageList = [...this.messageList, Object.assign({}, message, {id: Math.random()})]
+      this.messageList = [
+        ...this.messageList,
+        Object.assign({}, message, { id: Math.random() })
+      ]
     },
     openChat() {
       this.isChatOpen = true
@@ -183,16 +186,22 @@ export default {
       this.$root.$emit('onType')
       this.userIsTyping = true
     },
-    editMessage(message){
-      const m = this.messageList.find(m=>m.id === message.id);
-      m.isEdited = true;
-      m.data.text = message.data.text;
+    editMessage(message) {
+      const m = this.messageList.find(m => m.id === message.id)
+      m.isEdited = true
+      m.data.text = message.data.text
     },
-    like(id){
-      const m = this.messageList.findIndex(m => m.id === id);
-      var msg = this.messageList[m];
-      msg.liked = !msg.liked;
-      this.$set(this.messageList, m, msg);
+    like(id) {
+      const m = this.messageList.findIndex(m => m.id === id)
+      var msg = this.messageList[m]
+      msg.liked = !msg.liked
+      this.$set(this.messageList, m, msg)
+    },
+    usuarioEntrou(usuario) {
+      if (usuario) {
+        this.showEntrar = false
+        console.log(usuario)
+      }
     }
   },
   computed: {
@@ -203,10 +212,13 @@ export default {
     },
     backgroundColor() {
       return this.chosenColor === 'dark' ? this.colors.messageList.bg : '#fff'
+    },
+    mostrarEnterWindow() {
+      return this.showEntrar
     }
   },
-  mounted(){
-    this.messageList.forEach(x=>x.liked = false);
+  mounted() {
+    this.messageList.forEach(x => (x.liked = false))
   }
 }
 </script>
